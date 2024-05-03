@@ -1,6 +1,7 @@
 name: Bundle
 
 on:
+  pull_request:
   # Run when a release is published
   release:
     types:
