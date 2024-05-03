@@ -30,21 +30,16 @@
 ##
 ## expect name == Ok (Str.toUtf8 "\"Röc Lang\"")
 ## ```
-interface Core
-    exposes [
-        Json,
-        json,
-        jsonWithOptions,
-        encodeAsNullOption,
-    ]
+module [
+    Json,
+    json,
+    jsonWithOptions,
+    encodeAsNullOption,
+]
 
-    imports [
-        Encode.{
-            Encoder,
-            EncoderFormatting,
-            appendWith,
-        },
-    ]
+import Encode exposing [
+    appendWith,
+]
 
 ## An opaque type with the `EncoderFormatting` and
 ## `DecoderFormatting` abilities.
@@ -1488,7 +1483,7 @@ decodeRecord = \initialState, stepField, finalizer -> Decode.custom \bytes, @Jso
 
                             # Build final record from decoded fields and values
                             when finalizer updatedRecord json is
-                                ##This step is where i can implement my special decoding of options
+                                ## This step is where i can implement my special decoding of options
                                 Ok val -> { result: Ok val, rest }
                                 Err e ->
                                     { result: Err e, rest }

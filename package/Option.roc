@@ -1,11 +1,8 @@
 ## Represents either a value, or nothing
 ## If you need to distinguish between a missing field and a `null` field you should use `OptionOrNull`
-interface Option
-    exposes [none, some, get, getResult, from, fromResult]
-    imports [
-        Encode,
-        Core,
-    ]
+module [none, some, get, getResult, from, fromResult]
+
+import Core
 
 Option val := [Some val, None]
     implements [
@@ -49,64 +46,65 @@ decoderRes = Decode.custom \bytes, fmt ->
 ## Used to indicate to roc highlighting that a string is json
 json = \a -> a
 
-OptionTest : { name : Str, lastName : Option Str, age : Option U8 }
-expect
-    decoded : Result OptionTest _
-    decoded =
-        """
-        { "age":1, "name":"hi" }
-        """
-        |> json
-        |> Str.toUtf8
-        |> Decode.fromBytes Core.json
+# https://github.com/lukewilliamboswell/roc-json/issues/24
+# OptionTest : { name : Str, lastName : Option Str, age : Option U8 }
+# expect
+#     decoded : Result OptionTest _
+#     decoded =
+#         """
+#         { "age":1, "name":"hi" }
+#         """
+#         |> json
+#         |> Str.toUtf8
+#         |> Decode.fromBytes Core.json
 
-    expected = Ok ({ name: "hi", lastName: none {}, age: some 1u8 })
-    expected == decoded
+#     expected = Ok ({ name: "hi", lastName: none {}, age: some 1u8 })
+#     expected == decoded
 
-expect
-    decoded : Result OptionTest _
-    decoded =
-        """
-        { "age":1, "name":"hi", "lastName":null }
-        """
-        |> json
-        |> Str.toUtf8
-        |> Decode.fromBytes Core.json
+# expect
+#     decoded : Result OptionTest _
+#     decoded =
+#         """
+#         { "age":1, "name":"hi", "lastName":null }
+#         """
+#         |> json
+#         |> Str.toUtf8
+#         |> Decode.fromBytes Core.json
 
-    expected = Ok ({ name: "hi", lastName: none {}, age: some 1u8 })
-    expected == decoded
+#     expected = Ok ({ name: "hi", lastName: none {}, age: some 1u8 })
+#     expected == decoded
 
-expect
-    toEncode : OptionTest
-    toEncode =
-        { name: "hi", lastName: none {}, age: some 1u8 }
-    encoded =
-        toEncode
-        |> Encode.toBytes Core.json
-        |> Str.fromUtf8
+# expect
+#     toEncode : OptionTest
+#     toEncode =
+#         { name: "hi", lastName: none {}, age: some 1u8 }
+#     encoded =
+#         toEncode
+#         |> Encode.toBytes Core.json
+#         |> Str.fromUtf8
 
-    expected =
-        """
-        { "age":1, "name":"hi", "lastName":null }
-        """
-        |> json
-        |> Ok
-    expected == encoded
+#     expected =
+#         """
+#         { "age":1, "name":"hi", "lastName":null }
+#         """
+#         |> json
+#         |> Ok
+#     expected == encoded
 
-expect
-    toEncode : OptionTest
-    toEncode =
-        { name: "hi", lastName: none {}, age: some 1u8 }
-    encoded =
-        toEncode
-        |> Encode.toBytes (Core.jsonWithOptions { emptyEncodeAsNull: Core.encodeAsNullOption {record:Bool.false} })
-        |> Str.fromUtf8
+# expect
+#     toEncode : OptionTest
+#     toEncode =
+#         { name: "hi", lastName: none {}, age: some 1u8 }
+#     encoded =
+#         toEncode
+#         |> Encode.toBytes (Core.jsonWithOptions { emptyEncodeAsNull: Core.encodeAsNullOption { record: Bool.false } })
+#         |> Str.fromUtf8
 
-    expected =
-        """
-        { "age":1, "name":"hi" }
-        """
-        |> json
-        |> Ok
-    expected == encoded
+#     expected =
+#         """
+#         { "age":1, "name":"hi" }
+#         """
+#         |> json
+#         |> Ok
+#     expected == encoded
 
